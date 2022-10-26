@@ -34,5 +34,23 @@ namespace CashRegisterTest
             //then
             printerMock.Verify(_=>_.Print(It.IsAny<string>()), Times.AtLeastOnce);
         }
+
+        [Fact]
+        public void Should_print_purchase_content_when_run_process_given_stub_purchase()
+        {
+            //given
+            var printerMock = new Mock<Printer>();
+            var cashRegister = new CashRegister(printerMock.Object);
+            var purchaseMock = new Mock<Purchase>();
+            purchaseMock.Setup(_ => _.AsString())
+                .Returns("moq string");
+
+            //when
+            cashRegister.Process(purchaseMock.Object);
+
+            //then
+            printerMock.Setup(_ => _.Print(It.IsAny<string>()))
+                .Callback<string>(item => Assert.Equal("moq string", item));
+        }
     }
 }

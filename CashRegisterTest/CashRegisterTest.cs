@@ -52,5 +52,19 @@ namespace CashRegisterTest
             printerMock.Setup(_ => _.Print(It.IsAny<string>()))
                 .Callback<string>(item => Assert.Equal("moq string", item));
         }
+
+        [Fact]
+        public void Should_throw_HardwareException_when_run_process_given_purchase_throw_print_throw_PrinterOutOfPaperException()
+        {
+            //given
+            var printerMock = new Mock<Printer>();
+            printerMock.Setup(_ => _.Print(It.IsAny<string>())).Throws<PrinterOutOfPaperException>();
+            var purchaseMock = new Mock<Purchase>();
+            var cashRegister = new CashRegister(printerMock.Object);
+
+            //when
+            //then
+            Assert.Throws<HardwareException>(() => cashRegister.Process(purchaseMock.Object));
+        }
     }
 }
